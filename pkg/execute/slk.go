@@ -36,10 +36,6 @@ func startInteractiveMode() ExitStatus {
 	return ExitStatusSuccess
 }
 
-func runScript(scriptPath string) ExitStatus {
-	return ExitStatusSuccess
-}
-
 func CommandLine(commandLineArgs []string) ExitStatus {
 	if len(commandLineArgs) == 0 {
 		return startInteractiveMode()
@@ -54,7 +50,15 @@ func CommandLine(commandLineArgs []string) ExitStatus {
 		if len(commandLineArgs) < 2 {
 			return displayArgsError("Missing script path")
 		}
-		return runScript(commandLineArgs[1])
+		return compileAndExecute(commandLineArgs[1])
 	}
+	if isScriptFile(commandLineArgs[0]) {
+		return executeScript(commandLineArgs[0])
+	}
+
 	return displayArgsError(fmt.Sprintf("Unknown command: %s", commandLineArgs[0]))
+}
+
+func isScriptFile(path string) bool {
+	return len(path) > 4 && path[len(path)-4:] == ".slk"
 }
